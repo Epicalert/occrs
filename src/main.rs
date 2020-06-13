@@ -30,11 +30,13 @@ fn main() {
         .read_to_string(&mut input)
         .expect("oopsies poopsies");
 
-    let mut unique_lines = Vec::<UniqueLine>::new();
-
-    //TODO: separate this into a function
     //TODO: add option for alternate line separator
-    for line in input.split("\n") {
+    let input_lines = input.split("\n");
+    let mut input_count = 0;
+
+    let mut unique_lines = Vec::<UniqueLine>::new();
+    //TODO: separate this into a function
+    for line in input_lines {
         let index_result = get_line_index(&unique_lines, String::from(line));
 
         //TODO: ignore empty
@@ -47,9 +49,16 @@ fn main() {
                     pattern: String::from(line),
                     count: 1 });
         }
+
+        input_count += 1;
     }
     
     for line in unique_lines {
-        println!("{} {}", line.count, line.pattern);
+        println!("{} ({:.2}%) {}",
+            line.count,
+            (line.count as f32 / input_count as f32 * 100.0),
+            line.pattern);
     }
+
+    println!("Total items: {}", input_count);
 }
