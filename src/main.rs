@@ -37,9 +37,10 @@ fn main() {
     let mut unique_lines = Vec::<UniqueLine>::new();
     //TODO: separate this into a function
     for line in input_lines {
+        if line == "" { continue; }
+
         let index_result = get_line_index(&unique_lines, String::from(line));
 
-        //TODO: ignore empty
         if index_result.is_ok() {
             let index = index_result.ok().unwrap();
             unique_lines[index].count += 1;
