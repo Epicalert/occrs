@@ -38,13 +38,12 @@ fn get_line_index(list: &Vec::<UniqueLine>, pattern: String) -> Result<usize, St
     result
 }
 
-
 fn main() {
     let mut input = String::new();
 
     io::stdin()
         .read_to_string(&mut input)
-        .expect("oopsies poopsies");
+        .expect("Couldn't read from stdin.");
 
     //TODO: add option for alternate line separator
     let input_lines = input.split("\n");
@@ -69,7 +68,7 @@ fn main() {
 
         input_count += 1;
     }
-    
+
     for line in unique_lines {
         println!("{} ({:.2}%) {}",
             line.count,
