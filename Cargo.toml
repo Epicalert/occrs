@@ -2,7 +2,7 @@
 name = "occrs"
 description = "A CLI utility for counting occurances of unique items in a list"
 license = "Apache-2.0"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Epicalert <epicalert@protonmail.com>"]
 edition = "2018"
 
