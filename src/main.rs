@@ -38,9 +38,28 @@ fn get_line_index(list: &Vec::<UniqueLine>, pattern: String) -> Result<usize, St
     result
 }
 
+fn line_iteration(unique_lines: &mut Vec::<UniqueLine>, line: String, input_count: &mut usize ) {
+    if line == "" { return; }
+
+    let index_result = get_line_index(unique_lines, line.clone());
+
+    if index_result.is_ok() {
+        let index = index_result.ok().unwrap();
+        unique_lines[index].count += 1;
+    } else {
+        unique_lines.push(
+            UniqueLine {
+                pattern: line,
+                count: 1 });
+    }
+
+    *input_count += 1;
+}
+
 fn main() {
     let mut input = String::new();
 
+    //TODO: add streamed file input support
     io::stdin()
         .read_to_string(&mut input)
         .expect("Couldn't read from stdin.");
@@ -50,23 +69,8 @@ fn main() {
     let mut input_count = 0;
 
     let mut unique_lines = Vec::<UniqueLine>::new();
-    //TODO: separate this into a function
     for line in input_lines {
-        if line == "" { continue; }
-
-        let index_result = get_line_index(&unique_lines, String::from(line));
-
-        if index_result.is_ok() {
-            let index = index_result.ok().unwrap();
-            unique_lines[index].count += 1;
-        } else {
-            unique_lines.push(
-                UniqueLine {
-                    pattern: String::from(line),
-                    count: 1 });
-        }
-
-        input_count += 1;
+        line_iteration(&mut unique_lines, String::from(line), &mut input_count);
     }
 
     for line in unique_lines {
