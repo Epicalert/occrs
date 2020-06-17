@@ -15,7 +15,12 @@
 */
 
 use std::io;
-use std::io::Read;
+use std::io::BufReader;
+use std::io::BufRead;
+
+use std::fs::File;
+
+use std::env;
 
 struct UniqueLine {
     pattern: String,
@@ -57,28 +62,49 @@ fn line_iteration(unique_lines: &mut Vec::<UniqueLine>, line: String, input_coun
 }
 
 fn main() {
-    let mut input = String::new();
+    let args: Vec<String> = env::args().collect();
 
-    //TODO: add streamed file input support
-    io::stdin()
-        .read_to_string(&mut input)
-        .expect("Couldn't read from stdin.");
-
-    //TODO: add option for alternate line separator
-    let input_lines = input.split("\n");
+    //TODO: please for the love of god separate this whole processing block thing into a function
     let mut input_count = 0;
 
     let mut unique_lines = Vec::<UniqueLine>::new();
-    for line in input_lines {
-        line_iteration(&mut unique_lines, String::from(line), &mut input_count);
+    if args.len() > 1 {
+        let input_file = File::open(args[1].clone())
+            .expect(
+                format!("Could open file {}", args[1].clone())
+                    .as_str());
+        let input_bufreader = BufReader::new(input_file);
+        //TODO: add option for alternate line separator
+        let input_lines = input_bufreader.split(b'\n');
+
+        for line in input_lines {
+            let line = String::from_utf8(
+                line.expect("Something went wrong while reading the file.")
+                ).expect("This file is not valid UTF-8.");
+            line_iteration(&mut unique_lines, line, &mut input_count);
+        }
+    } else {
+        let input = BufReader::new(io::stdin());
+
+        //Tried to follow DRY but now I just hate types
+        let input_lines = input.split(b'\n');
+        for line in input_lines {
+            let line = String::from_utf8(
+                line.expect("Something went wrong while reading from stdin.")
+                ).expect("Stdin contains invalid UTF-8.");
+            line_iteration(&mut unique_lines, line, &mut input_count);
+        }
     }
 
+    //TODO: same with this, make it a function
     for line in unique_lines {
         println!("{} ({:.2}%) {}",
             line.count,
             (line.count as f32 / input_count as f32 * 100.0),
             line.pattern);
     }
-
     println!("Total items: {}", input_count);
+
+    //Nobody expects the spanish inquisition!
 }
+
