@@ -8,11 +8,11 @@ A CLI utility for counting occurences in a list.
 
 Pass a newline-separated list to stdin.
 
-e.g. `cat testfile | occrs`
+e.g. `cat tests/test-1 | occrs`
 
 ## Sample output
 
-The following output is the result of processing `testfile` in the root of this repository.
+The following output is the result of processing `tests/test-1` in the root of this repository.
 
 ```
 18 (47.37%) y

@@ -11,3 +11,4 @@ cache: cargo
 script:
   - cargo build --verbose
   - cargo test --verbose
+  - tests/bintests.sh
