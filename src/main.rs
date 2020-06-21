@@ -22,9 +22,16 @@ use std::fs::File;
 
 use std::env;
 
+//a unique pattern in the input
 struct UniqueLine {
     pattern: String,
-    count: u32
+    count: u32  //TODO: change to usize
+}
+
+//summary of the unique patterns
+struct Summary {
+    unique: Vec::<UniqueLine>,
+    total_count: usize
 }
 
 fn get_line_index(list: &Vec::<UniqueLine>, pattern: String) -> Result<usize, String> {
@@ -61,14 +68,14 @@ fn line_iteration(unique_lines: &mut Vec::<UniqueLine>, line: String, input_coun
     *input_count += 1;
 }
 
-fn main() {
+//generates a Summary struct of the information
+fn count_occurances() -> Summary {
     let args: Vec<String> = env::args().collect();
-
-    //TODO: please for the love of god separate this whole processing block thing into a function
     let mut input_count = 0;
-
     let mut unique_lines = Vec::<UniqueLine>::new();
+
     if args.len() > 1 {
+        //load from a file
         let input_file = File::open(args[1].clone())
             .expect(
                 format!("Could open file {}", args[1].clone())
@@ -84,6 +91,7 @@ fn main() {
             line_iteration(&mut unique_lines, line, &mut input_count);
         }
     } else {
+        //load from stdin
         let input = BufReader::new(io::stdin());
 
         //Tried to follow DRY but now I just hate types
@@ -96,14 +104,24 @@ fn main() {
         }
     }
 
-    //TODO: same with this, make it a function
-    for line in unique_lines {
+    return Summary {
+        unique: unique_lines,
+        total_count: input_count};
+}
+
+//format and print a Summary struct to stdout
+fn print_results(summary: Summary) {
+    for line in summary.unique {
         println!("{} ({:.2}%) {}",
             line.count,
-            (line.count as f32 / input_count as f32 * 100.0),
+            (line.count as f32 / summary.total_count as f32 * 100.0),
             line.pattern);
     }
-    println!("Total items: {}", input_count);
+    println!("Total items: {}", summary.total_count);
+}
+
+fn main() {
+    print_results(count_occurances());
 
     //Nobody expects the spanish inquisition!
 }
