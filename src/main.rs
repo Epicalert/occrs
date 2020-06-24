@@ -20,7 +20,9 @@ use std::io::BufRead;
 
 use std::fs::File;
 
-use std::env;
+extern crate clap;
+
+mod arguments;
 
 //a unique pattern in the input
 struct UniqueLine {
@@ -69,16 +71,15 @@ fn line_iteration(unique_lines: &mut Vec::<UniqueLine>, line: String, input_coun
 }
 
 //generates a Summary struct of the information
-fn count_occurances() -> Summary {
-    let args: Vec<String> = env::args().collect();
+fn count_occurances(filename: Option<&str>) -> Summary { //TODO: fix misspelling of "occurrences" you poopy brain
     let mut input_count = 0;
     let mut unique_lines = Vec::<UniqueLine>::new();
 
-    if args.len() > 1 {
+    if filename.is_some() {
         //load from a file
-        let input_file = File::open(args[1].clone())
+        let input_file = File::open(filename.unwrap())
             .expect(
-                format!("Could open file {}", args[1].clone())
+                format!("Could open file {}", filename.unwrap())
                     .as_str());
         let input_bufreader = BufReader::new(input_file);
         //TODO: add option for alternate line separator
@@ -121,7 +122,9 @@ fn print_results(summary: Summary) {
 }
 
 fn main() {
-    print_results(count_occurances());
+    let args = arguments::args_prepare();
+
+    print_results(count_occurances(args.value_of("FILE"))); 
 
     //Nobody expects the spanish inquisition!
 }
