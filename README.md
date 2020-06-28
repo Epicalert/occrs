@@ -10,6 +10,10 @@ Pass a newline-separated list to stdin.
 
 e.g. `cat tests/test-1 | occrs`
 
+You can also pass a file as an argument.
+
+e.g. `occrs tests/test-1`
+
 ## Sample output
 
 The following output is the result of processing `tests/test-1` in the root of this repository.
